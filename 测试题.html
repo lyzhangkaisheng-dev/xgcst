@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>高铁悬挂系统知识测验</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f0f4f8;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+        }
+        .container {
+            max-width: 820px;
+            width: 100%;
+            background: #fff;
+            border-radius: 24px;
+            padding: 30px 35px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.10);
+            margin-top: 20px;
+        }
+        h1 {
+            font-size: 26px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #eef2f6;
+            padding-bottom: 18px;
+        }
+        h1 small {
+            font-size: 15px;
+            font-weight: 400;
+            color: #5b6f82;
+            margin-left: auto;
+        }
+
+        .student-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 18px 0 4px;
+            background: #f7faff;
+            border: 2px solid #dce4ec;
+            border-radius: 14px;
+            padding: 12px 18px;
+        }
+        .student-row label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2a36;
+            white-space: nowrap;
+        }
+        .student-row input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 16px;
+            color: #0b1a26;
+            padding: 6px 0;
+            border-bottom: 1.5px solid #cbd7e4;
+            min-width: 0;
+        }
+        .student-row input:focus {
+            border-bottom-color: #1a6fd6;
+        }
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 18px 0 22px;
+            font-size: 15px;
+            color: #1f2a36;
+        }
+        .progress-wrap {
+            height: 6px;
+            background: #e6edf4;
+            border-radius: 8px;
+            margin-bottom: 28px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: #2a7de1;
+            border-radius: 8px;
+            transition: width 0.3s;
+        }
+        .question {
+            display: block;
+        }
+        .q-header {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .q-header .part-tag {
+            font-size: 13px;
+            font-weight: 400;
+            background: #eef2f6;
+            padding: 2px 14px;
+            border-radius: 30px;
+            color: #3e5a70;
+        }
+        .q-text {
+            font-size: 17px;
+            line-height: 1.7;
+            margin: 8px 0 18px;
+            color: #0b1a26;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .options label {
+            background: #f7faff;
+            border: 2px solid #dce4ec;
+            border-radius: 14px;
+            padding: 14px 18px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .options label:hover {
+            background: #edf4fd;
+            border-color: #a0b9d4;
+        }
+        .options label.selected {
+            border-color: #1a6fd6;
+            background: #eaf3fe;
+        }
+        .options label.correct-answer {
+            border-color: #1a9e4b;
+            background: #e2f5e8;
+        }
+        .options label.wrong-answer {
+            border-color: #d6453a;
+            background: #fce8e6;
+        }
+        .options label.disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+        .options input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #1a6fd6;
+            flex-shrink: 0;
+            pointer-events: none;
+        }
+        .result-box {
+            margin-top: 16px;
+            padding: 16px 20px;
+            border-radius: 14px;
+            display: none;
+        }
+        .result-box.show {
+            display: block;
+        }
+        .result-box.correct {
+            background: #e2f5e8;
+            border-left: 5px solid #1a9e4b;
+        }
+        .result-box.wrong {
+            background: #fce8e6;
+            border-left: 5px solid #d6453a;
+        }
+        .result-box .result-icon {
+            font-weight: 600;
+            font-size: 17px;
+        }
+        .result-box .explain-text {
+            margin-top: 6px;
+            color: #1f2a36;
+            font-size: 15px;
+        }
+        .click-hint {
+            text-align: center;
+            margin-top: 18px;
+            padding: 14px;
+            color: #7a8fa0;
+            font-size: 14px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 2px dashed #dce4ec;
+            display: none;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .click-hint.show {
+            display: block;
+        }
+        .click-hint:hover {
+            background: #f0f5fc;
+            border-color: #a0b9d4;
+        }
+        .btn-group {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .btn {
+            background: #eef2f6;
+            border: none;
+            border-radius: 40px;
+            padding: 12px 28px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #1f2a36;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .btn-primary {
+            background: #1a6fd6;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #1359b0;
+        }
+        .btn-primary:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #cbd7e4;
+        }
+        .btn-outline:hover {
+            background: #f0f5fc;
+        }
+        .btn-success {
+            background: #1a9e4b;
+            color: #fff;
+        }
+        .btn-success:hover {
+            background: #15833e;
+        }
+        .result-panel {
+            display: none;
+            margin-top: 20px;
+            border-top: 2px solid #e6edf4;
+            padding-top: 24px;
+        }
+        .result-panel.show {
+            display: block;
+        }
+        .score-box {
+            background: #eaf3fe;
+            border-radius: 20px;
+            padding: 20px 24px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+        }
+        .score-box .big {
+            font-size: 38px;
+            font-weight: 700;
+            color: #0f2a4a;
+        }
+        .review-item {
+            border-bottom: 1px solid #eef2f6;
+            padding: 16px 0;
+        }
+        .review-item .tag {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 2px 14px;
+            border-radius: 30px;
+            margin-right: 12px;
+        }
+        .tag.correct { background: #d3f0d6; color: #0d6b2b; }
+        .tag.wrong { background: #fce1df; color: #b13a30; }
+        .review-item .explain {
+            color: #2b4053;
+            margin-top: 6px;
+            font-size: 15px;
+            background: #f8fafc;
+            padding: 10px 16px;
+            border-radius: 12px;
+        }
+        .weakness {
+            background: #fef7e9;
+            border-left: 5px solid #f0b341;
+            padding: 18px 22px;
+            border-radius: 16px;
+            margin: 18px 0 10px;
+        }
+        .weakness h4 { margin-bottom: 6px; }
+        .footer-note {
+            text-align: center;
+            font-size: 14px;
+            color: #6d7f91;
+            margin-top: 18px;
+        }
+        .review-btn-area {
+            text-align: center;
+            margin: 10px 0 4px;
+        }
+        @media (max-width: 600px) {
+            .container { padding: 20px 16px; }
+            .q-text { font-size: 16px; }
+            .options label { padding: 12px 14px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <h1>
+        🚄 高铁悬挂系统测验
+        <small>一系 · 二系</small>
+    </h1>
+
+    <!-- 学号输入 -->
+    <div class="student-row">
+        <label for="studentId">学号</label>
+        <input type="text" id="studentId" placeholder="请输入学号" autocomplete="off" />
+    </div>
+
+    <div class="status-bar">
+        <span id="qCounter">第 1 / 20 题</span>
+        <span id="scoreLabel" style="font-weight:500;">📝 答题中</span>
+    </div>
+    <div class="progress-wrap"><div class="progress-fill" id="progressFill"></div></div>
+
+    <!-- 题目容器 -->
+    <div id="questionArea"></div>
+
+    <!-- 提示点击跳转 -->
+    <div class="click-hint" id="clickHint">👆 点击此处或任意空白区域，进入下一题</div>
+
+    <!-- 按钮组 -->
+    <div class="btn-group">
+        <button class="btn btn-success" id="submitBtn">📊 交卷 · 查看成绩</button>
+        <button class="btn btn-outline" id="resetBtn">🔄 重新测验</button>
+    </div>
+
+    <!-- 结果面板 -->
+    <div class="result-panel" id="resultPanel">
+        <div class="score-box">
+            <span><span class="big" id="finalScore">0</span> / 20</span>
+            <span id="gradeText" style="font-size:18px; font-weight:500;"></span>
+            <div id="stuInfo" style="flex-basis:100%; font-size:15px; color:#3e5a70; margin-top:6px;"></div>
+        </div>
+        <div id="weaknessArea"></div>
+        <div id="reviewList"></div>
+        <div class="review-btn-area">
+            <button class="btn btn-outline" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ 回到顶部</button>
+        </div>
+    </div>
+    <div class="footer-note">💡 每道题点击选项后自动显示对错与解析，点击空白处进入下一题</div>
+</div>
+
+<script>
+// ---------- 题库 ----------
+const questions = [
+    // 一系 (1-8)
+    { id:1, part:'一系', q:'CRH3C一系悬挂中，钢制弹簧组的主要作用是什么？', opts:['A. 消耗蛇行摆动能量','B. 缓冲钢轨接缝、道岔带来的高频冲击','C. 抑制车体过弯时的侧倾','D. 自动调节车体高度'], ans:1, explain:'B 正确。A是抗蛇形减振器，C是抗侧滚扭杆，D是空气弹簧。' },
+    { id:2, part:'一系', q:'一系悬挂中，垂向减振器与钢制弹簧组的关系是？', opts:['A. 垂向减振器替代弹簧承载重量','B. 垂向减振器消耗弹簧反复压缩回弹的多余能量','C. 两者互不相关，独立工作','D. 垂向减振器负责横向稳定'], ans:1, explain:'B 正确。弹簧"抗住"冲击，减振器"拉住"弹簧，防止余震。' },
+    { id:3, part:'一系', q:'一系悬挂中的轴箱定位拉杆，其主要功能是？', opts:['A. 承载车厢重量','B. 过滤高频震动','C. 约束车轮运动轨迹，保证车轮始终对准轨道','D. 自动调节气压'], ans:2, explain:'C 正确。A/D是空气弹簧功能，B是钢弹簧功能。' },
+    { id:4, part:'一系', q:'如果没有一系悬挂，以下哪个后果最先发生？', opts:['A. 车厢剧烈晃动','B. 轮对快速磨损报废','C. 过弯时侧翻','D. 空气弹簧失效'], ans:1, explain:'B 正确。一系位于车轮与构架间，首要是保护轮对。' },
+    { id:5, part:'一系', q:'一系悬挂钢制弹簧组的"双圈"设计主要目的是？', opts:['A. 增加美观度','B. 增大承载能力和弹性裕度','C. 减少生产成本','D. 便于安装'], ans:1, explain:'B 正确。双圈螺旋弹簧提供更大的弹性变形范围和承载能力。' },
+    { id:6, part:'一系', q:'一系悬挂主要处理什么频率范围的振动？', opts:['A. 低频大幅晃动','B. 中频横向摆动','C. 高频微小震动','D. 超低频俯仰'], ans:2, explain:'C 正确。一系负责高频隔振，二系负责低频舒适过滤。' },
+    { id:7, part:'一系', q:'以下哪个不属于一系悬挂的组成部分？', opts:['A. 双圈螺旋钢弹簧','B. 轴箱定位拉杆','C. 垂向减振器','D. 抗蛇形减振器'], ans:3, explain:'D 正确。抗蛇形减振器属于二系悬挂部件。' },
+    { id:8, part:'一系', q:'一系悬挂的"定位"功能主要通过什么实现？', opts:['A. 钢弹簧的弹力','B. 带有橡胶节点的上下拉杆','C. 空气弹簧的气压调节','D. 垂向减振器的阻尼'], ans:1, explain:'B 正确。轴箱定位通过上下两组带橡胶节点的拉杆实现。' },
+    // 二系 (9-20)
+    { id:9, part:'二系', q:'二系悬挂中，空气弹簧在旅客上下车时的核心动作是？', opts:['A. 两侧同时充气','B. 两侧同时放气','C. 一侧充气、一侧放气，保持车体水平','D. 完全不工作'], ans:2, explain:'C 正确。空气弹簧动态调平，保持车体水平。' },
+    { id:10, part:'二系', q:'横向减振器主要抑制车体的哪种运动？', opts:['A. 上下跳动','B. 左右横向晃动','C. 前后俯仰','D. 绕垂直轴旋转'], ans:1, explain:'B 正确。横向减振器管"平移"，防止车体左右滑动。' },
+    { id:11, part:'二系', q:'抗侧滚扭杆与横向减振器在过弯时的分工是？', opts:['A. 两者都抑制侧倾','B. 两者都抑制平移','C. 横向减振器抑制平移，抗侧滚扭杆抑制侧倾','D. 两者功能完全相同'], ans:2, explain:'C 正确。横向减振器管"平移的力"，抗侧滚扭杆管"翻转的矩"。' },
+    { id:12, part:'二系', q:'以下哪个部件专门抑制列车高速下的蛇行失稳？', opts:['A. 空气弹簧','B. 抗侧滚扭杆','C. 抗蛇形减振器','D. 横向减振器'], ans:2, explain:'C 正确。抗蛇形减振器专门抑制蛇行失稳。' },
+    { id:13, part:'二系', q:'抗侧滚扭杆在直线行驶时的状态是？', opts:['A. 完全不工作','B. 仅在遇到道岔时工作','C. 24小时待命，直线时低调微调','D. 仅在侧风时工作'], ans:2, explain:'C 正确。抗侧滚扭杆全天候工作，转弯时作用最明显。' },
+    { id:14, part:'二系', q:'空气弹簧在列车过弯时的调节方式是？', opts:['A. 外侧充气、内侧放气','B. 外侧放气、内侧充气','C. 两侧同时充气','D. 两侧同时放气'], ans:1, explain:'B 正确。外侧受力增大放气降低，内侧受力减小充气升高。' },
+    { id:15, part:'二系', q:'以下哪个场景不属于空气弹簧的应用场景？', opts:['A. 旅客上下车时自动调平','B. 直线运行时吸收高频震动','C. 抑制车轮蛇形摆动','D. 过弯时补偿离心力'], ans:2, explain:'C 正确。抑制蛇形摆动是抗蛇形减振器的职责。' },
+    { id:16, part:'二系', q:'列车蛇形摆动的根本原因是？', opts:['A. 轨道不平顺','B. 车轮踏面被设计成锥形','C. 侧风过大','D. 空气弹簧气压不足'], ans:1, explain:'B 正确。锥形踏面让列车能拐弯，但也导致直线不稳定。' },
+    { id:17, part:'二系', q:'如果二系悬挂完全失效，以下哪个后果最可能发生？', opts:['A. 轮对快速磨损','B. 车厢舒适性严重下降，乘客难以忍受','C. 车轮与钢轨硬碰硬','D. 轴箱定位失效'], ans:1, explain:'B 正确。A/C/D是一系失效的后果。' },
+    { id:18, part:'整体', q:'一系悬挂和二系悬挂的核心分工是？', opts:['A. 一系管姿态，二系管承载','B. 一系管轮轨安全和高频隔振，二系管舒适过滤和姿态控制','C. 两者功能完全相同','D. 一系管横向，二系管垂向'], ans:1, explain:'B 正确。一系保安全（轮轨），二系保舒适（人）。' },
+    { id:19, part:'整体', q:'以下哪个属于二系悬挂的组成部分？', opts:['A. 双圈螺旋钢弹簧','B. 轴箱定位拉杆','C. 抗侧滚扭杆','D. 垂向减振器'], ans:2, explain:'C 正确。A/B/D属于一系悬挂。' },
+    { id:20, part:'整体', q:'关于一系和二系悬挂的关系，以下描述正确的是？', opts:['A. 二系悬挂可以完全替代一系悬挂','B. 两者缺一不可，共同构成完整减振体系','C. 一系悬挂比二系悬挂更重要','D. 二系悬挂比一系悬挂更重要'], ans:1, explain:'B 正确。没有一系车轮活不过一天，没有二系人坐不过一小时。' }
+];
+
+// ---------- 状态 ----------
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+let answered = new Array(questions.length).fill(false); // 该题是否已经作答并显示结果
+let submitted = false;
+
+const qArea = document.getElementById('questionArea');
+const counter = document.getElementById('qCounter');
+const progress = document.getElementById('progressFill');
+const submitBtn = document.getElementById('submitBtn');
+const resetBtn = document.getElementById('resetBtn');
+const resultPanel = document.getElementById('resultPanel');
+const finalScore = document.getElementById('finalScore');
+const gradeText = document.getElementById('gradeText');
+const reviewList = document.getElementById('reviewList');
+const weaknessArea = document.getElementById('weaknessArea');
+const scoreLabel = document.getElementById('scoreLabel');
+const clickHint = document.getElementById('clickHint');
+
+// ---------- 渲染题目 ----------
+function renderQuestion() {
+    const q = questions[current];
+    const hasAnswered = answered[current];
+    const selected = answers[current];
+
+    let html = `<div class="question"><div class="q-header">
+        <span>第 ${current+1} 题</span>
+        <span class="part-tag">${q.part}</span>
+    </div>`;
+    html += `<div class="q-text">${q.q}</div><div class="options">`;
+
+    q.opts.forEach((opt, idx) => {
+        let cls = '';
+        let disabled = '';
+        let checked = (selected === idx) ? 'checked' : '';
+
+        if (hasAnswered) {
+            disabled = 'disabled';
+            if (idx === q.ans) cls += ' correct-answer';
+            if (selected === idx && selected !== q.ans) cls += ' wrong-answer';
+            if (selected === idx) cls += ' selected';
+        }
+
+        html += `<label class="${cls} ${hasAnswered ? 'disabled' : ''}">
+            <input type="radio" name="q" value="${idx}" ${checked} ${disabled}>
+            ${opt}
+        </label>`;
+    });
+
+    html += `</div>`;
+
+    // 结果展示区
+    let resultShow = hasAnswered ? 'show' : '';
+    let resultClass = '';
+    let resultIcon = '';
+    let explainText = '';
+    if (hasAnswered) {
+        const isCorrect = (selected === q.ans);
+        resultClass = isCorrect ? 'correct' : 'wrong';
+        resultIcon = isCorrect ? '✅ 回答正确！' : '❌ 回答错误';
+        const correctLetter = String.fromCharCode(65 + q.ans);
+        const userLetter = (selected !== null) ? String.fromCharCode(65 + selected) : '未作答';
+        explainText = `你的答案：${userLetter} ｜ 正确答案：${correctLetter}。${q.explain}`;
+    }
+
+    html += `<div class="result-box ${resultShow} ${resultClass}" id="resultBox">
+        <div class="result-icon">${resultIcon}</div>
+        <div class="explain-text">${explainText}</div>
+    </div>`;
+
+    html += `</div>`;
+    qArea.innerHTML = html;
+
+    // 绑定 radio 事件（未作答时）
+    if (!hasAnswered && !submitted) {
+        qArea.querySelectorAll('input[name="q"]').forEach(el => {
+            el.addEventListener('change', function() {
+                if (submitted || answered[current]) return;
+                const val = parseInt(this.value);
+                answers[current] = val;
+                // 立即显示结果
+                showResult();
+            });
+        });
+    }
+
+    // 更新进度
+    counter.textContent = `第 ${current+1} / ${questions.length} 题`;
+    const answeredCount = answered.filter(a => a === true).length;
+    progress.style.width = (answeredCount / questions.length * 100) + '%';
+    updateStatus();
+
+    // 显示/隐藏点击提示
+    if (hasAnswered && current < questions.length - 1) {
+        clickHint.classList.add('show');
+        clickHint.textContent = '👆 点击此处或任意空白区域，进入下一题';
+    } else if (hasAnswered && current === questions.length - 1) {
+        clickHint.classList.add('show');
+        clickHint.textContent = '🎯 已完成所有题目，点击下方"交卷 · 查看成绩"';
+    } else {
+        clickHint.classList.remove('show');
+    }
+}
+
+// ---------- 显示结果 ----------
+function showResult() {
+    if (answered[current]) return;
+    const q = questions[current];
+    const selected = answers[current];
+    if (selected === null) return;
+
+    answered[current] = true;
+    renderQuestion();
+
+    // 自动滚动到结果区域
+    const resultBox = document.getElementById('resultBox');
+    if (resultBox) {
+        setTimeout(() => {
+            resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+    }
+
+    // 更新交卷按钮状态
+    const allAnswered = answered.every(a => a === true);
+    if (allAnswered) {
+        submitBtn.textContent = '📊 交卷 · 查看成绩';
+        submitBtn.disabled = false;
+    }
+}
+
+// ---------- 跳转到下一题 ----------
+function goToNext() {
+    if (submitted) return;
+    if (!answered[current]) return; // 当前题未作答，不能跳转
+    if (current < questions.length - 1) {
+        current++;
+        renderQuestion();
+        // 滚动到顶部
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+// ---------- 点击空白区域跳转 ----------
+document.addEventListener('click', function(e) {
+    if (submitted) return;
+    // 如果点击的是选项、按钮、链接等，不触发跳转
+    const target = e.target;
+    if (target.closest('.options') || target.closest('label') || 
+        target.closest('input') || target.closest('.btn') ||
+        target.closest('.result-box') || target.closest('.click-hint')) {
+        return;
+    }
+    // 如果当前题目已作答，跳转下一题
+    if (answered[current] && current < questions.length - 1) {
+        goToNext();
+    }
+});
+
+// 点击提示区域也可以跳转
+document.getElementById('clickHint').addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (submitted) return;
+    if (answered[current] && current < questions.length - 1) {
+        goToNext();
+    }
+});
+
+// ---------- 更新状态 ----------
+function updateStatus() {
+    const answeredCount = answered.filter(a => a === true).length;
+    if (submitted) {
+        scoreLabel.textContent = '✅ 已交卷';
+        return;
+    }
+    scoreLabel.textContent = `📝 已答 ${answeredCount} / ${questions.length}`;
+    if (answeredCount === questions.length) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '📊 交卷 · 查看成绩';
+    } else {
+        submitBtn.disabled = true;
+        submitBtn.textContent = `📊 交卷 (${answeredCount}/${questions.length})`;
+    }
+}
+
+// ---------- 提交判卷 ----------
+function submitQuiz() {
+    if (submitted) return;
+    const allAnswered = answered.every(a => a === true);
+    if (!allAnswered) {
+        alert(`还有 ${answered.filter(a=>a===false).length} 题未作答，请完成所有题目后再交卷。`);
+        return;
+    }
+    submitted = true;
+    submitBtn.disabled = true;
+    clickHint.classList.remove('show');
+
+    // 计算得分 & 生成review
+    let correct = 0;
+    let reviewHtml = '';
+    let weakMap = { '一系':0, '二系':0, '整体':0 };
+    let weakTotal = { '一系':0, '二系':0, '整体':0 };
+    questions.forEach(q => { weakTotal[q.part] = (weakTotal[q.part]||0) + 1; });
+
+    questions.forEach((q, idx) => {
+        const userAns = answers[idx];
+        const isCorrect = (userAns === q.ans);
+        if (isCorrect) correct++;
+        else {
+            if (weakMap[q.part] !== undefined) weakMap[q.part] = (weakMap[q.part]||0) + 1;
+        }
+        const tag = isCorrect ? '✅ 正确' : '❌ 错误';
+        const tagClass = isCorrect ? 'correct' : 'wrong';
+        const correctLetter = String.fromCharCode(65 + q.ans);
+        const userLetter = (userAns !== null) ? String.fromCharCode(65 + userAns) : '未作答';
+        reviewHtml += `<div class="review-item">
+            <span class="tag ${tagClass}">${tag}</span>
+            <strong>第${idx+1}题</strong>（${q.part}）
+            <span style="color:#3e5a70;">你的答案：${userLetter} ｜ 正确答案：${correctLetter}</span>
+            <div class="explain">💡 ${q.explain}</div>
+        </div>`;
+    });
+
+    // 学号信息
+    const stuInfo = document.getElementById('stuInfo');
+    const studentId = document.getElementById('studentId').value.trim();
+    stuInfo.textContent = studentId ? `📋 学号：${studentId}` : '';
+
+    // 最终得分
+    finalScore.textContent = correct;
+    const pct = Math.round(correct/20*100);
+    let grade = '';
+    if (pct >= 90) grade = '🌟 优秀！对悬挂系统掌握非常扎实！';
+    else if (pct >= 75) grade = '👍 良好！有几个概念需要再巩固一下。';
+    else if (pct >= 60) grade = '📖 及格了，建议重点复习薄弱章节。';
+    else grade = '🔁 需要系统复习，建议从一系和二系的整体分工开始。';
+    gradeText.textContent = `${pct}% · ${grade}`;
+
+    // 薄弱点分析
+    let weakHtml = '<div class="weakness"><h4>📊 薄弱点诊断</h4>';
+    let hasWeak = false;
+    for (const [part, errCount] of Object.entries(weakMap)) {
+        if (errCount >= 2) {
+            hasWeak = true;
+            let advice = '';
+            if (part === '一系') advice = '重点复习：弹簧组、垂减、轴箱拉杆的功能与分工。';
+            else if (part === '二系') advice = '重点复习：空气弹簧、横向减振器、抗侧滚扭杆、抗蛇形减振器四者的工作场景差异。';
+            else advice = '重点理解：一系保轮轨安全，二系保乘坐舒适，两者缺一不可。';
+            weakHtml += `<p>🔹 <strong>${part}悬挂</strong>：错 ${errCount} 题。${advice}</p>`;
+        }
+    }
+    if (!hasWeak) weakHtml += '<p>✅ 各部分掌握均衡，继续保持！</p>';
+    weakHtml += '</div>';
+    weaknessArea.innerHTML = weakHtml;
+
+    reviewList.innerHTML = reviewHtml;
+    resultPanel.classList.add('show');
+    scoreLabel.textContent = '✅ 已交卷';
+    progress.style.width = '100%';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ---------- 重置 ----------
+function resetQuiz() {
+    if (!confirm('确定重新测验吗？当前进度将丢失。')) return;
+    submitted = false;
+    submitBtn.disabled = true;
+    submitBtn.textContent = '📊 交卷 (0/20)';
+    answers = new Array(questions.length).fill(null);
+    answered = new Array(questions.length).fill(false);
+    current = 0;
+    resultPanel.classList.remove('show');
+    renderQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 绑定事件
+submitBtn.addEventListener('click', submitQuiz);
+resetBtn.addEventListener('click', resetQuiz);
+
+// 初始化
+renderQuestion();
+</script>
+</body>
+</html>
